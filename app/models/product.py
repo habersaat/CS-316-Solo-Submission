@@ -62,12 +62,12 @@ WHERE id IN (
         # Get list of products that match the query string or are tagged with the query string
         k *= n
         rows = app.db.execute('''
-SELECT id
+SELECT id, name, description_short, description_long, rating, category, image_url, price, available, low_stock, shipping_speed
 FROM Products
 ''' + (f'WHERE category = :cat AND available = :available' if cat is not None else 'WHERE available = :available') + '''
 ''' + (f'AND LOWER(name) LIKE LOWER(:query)' if query is not None else '') + '''
 UNION
-SELECT id
+SELECT id, name, description_short, description_long, rating, category, image_url, price, available, low_stock, shipping_speed
 FROM Products
 WHERE id IN (
     SELECT pid
