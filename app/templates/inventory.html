@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Inventory</h1>
+
+<form action="{{ url_for('Inventory.sellers') }}" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.userID.label }}<br/>
+    {{ form.userID(size=32) }}<br/>
+    {{ form.submit() }}
+  </p>
+</form>
+
+{% if available_inventory %}
+<table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Seller ID</th>
+        <th scope="col">Product ID</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Available</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in available_inventory %}
+        <tr>
+          <td>{{ product.sid }}</td>
+          <td>{{ product.pid }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.available }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav aria-label="Inventory pagination">
+    <ul class="pagination">
+      {% for page_num in range(1, total_inventory_count // per_page + 1) %}
+        <li class="page-item {% if page_num == page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('Inventory.sellers', seller_id=seller_id, page=page_num)}}">{{ page_num }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% else %}
+  <p>No inventory items found for this seller.</p>
+{% endif %}
+
+{% endblock %}

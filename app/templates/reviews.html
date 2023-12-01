@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Reviews</h1>
+
+<form action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.userID.label }}<br/>
+    {{ form.userID(size=32) }}<br/>
+    <p>{{ form.submit() }}</p>
+    </p>
+</form>
+
+<table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Timestamp</th>
+        <th scope="col">Product ID</th>
+        <th scope="col">Rating</th>
+        <th scope="col">Comment</th>
+        <th scope="col">Upvotes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for review in recent_reviews%}
+        <tr>
+          <td>{{review.timestamp}}</td>
+          <td>{{review.product_id}}</td>
+          <td>{{review.rating}}</td>
+          <td>{{review.comment}}</td>
+          <td>{{review.upvotes}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="page-buttons">
+    {% if page > 1 %}
+      <a href="{{ url_for('reviews.reviews', page=page-1, user_id=user_id) }}" class="previous">&laquo; Previous</a>
+    {% endif %}
+    {% if page < total_pages %}
+      <a href="{{ url_for('reviews.reviews', page=page+1, user_id=user_id) }}" class="next">Next &raquo;</a>
+    {% endif %}
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      if(window.location.href.indexOf("user_id") > -1) {
+        window.history.replaceState({}, document.title, "/reviews");
+      }
+    });
+    </script>
+
+{% endblock %}
+

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if current_user.id == instance.sid %}
+    <div class="container">
+        <p>    </p>
+        <h1 class="title">Edit Product</h1>
+        <div class="new-product-form-container">
+            <form class="new-product-form" action="" method="post" onsubmit="formSubmit()">
+                {{ form.hidden_tag() }}
+                <p class="">
+                    {{ form.productname.label }}<br/>
+                    {{ form.productname(style='width: 350px') }}<br/>
+                </p>
+                <p>
+                    {{ form.shortdescription.label }}<br/>
+                    {{ form.shortdescription(style='width: 650px; height: 100') }}<br/>
+                </p>
+                <p>
+                    {{ form.longdescription.label }} <br/>
+                    {{ form.longdescription(style='width: 650px; height: 200px') }}<br/>
+                </p>
+                <p>
+                    {{ form.category.label }}<br/>
+                    {{ form.category(style='width: 250px') }}<br/>
+                </p>
+                <p>
+                    {{ form.tags.label }} (Enter as a comma-separated list. I.e., "cool, stylish, modern")<br/>
+                    {{ form.tags(style='width: 350px') }}<br/>
+                </p>
+                <p>
+                    {{ form.price.label }}<br/>
+                    {{ form.price(style='width: 100px') }}<br/>
+                </p>
+                <p>
+                    {{ form.quantity.label }}<br/>
+                    {{ form.quantity(style='width: 100px') }}<br/>
+                </p>
+                <p>
+                    {{ form.imageurl.label }}<br/>
+                    {{ form.imageurl(style='width: 650px') }}<br/>
+                <p>
+                    <button type="submit" class="btn btn-light">Resubmit</button>
+                </p>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <p>     </p>
+    <h2>You do not have access to this page.</h2>
+{% endif %}
+
+<script>
+    function formSubmit() {
+        alert("Product has been updated!");
+    }
+</script>
+
+{% endblock %}

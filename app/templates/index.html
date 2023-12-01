@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- <div>
+  <form>
+    <p>
+      <label for="fname">Sort by: Top k Most Expensive</label><br>
+      <input type="text" id="price_desc" name="price_desc"><br>
+    </p>
+    <p>
+      <input type="submit" value="Submit">
+    </p>
+  </form>
+</div> -->
+<div>
+  <p>
+    <form class="search-container">
+      <div class="filter-buttons">
+        <div class="dropdown">
+          <button class="dropbtn">Sort by</button>
+          <div class="dropdown-content">
+            <a href="#" onclick="sortBy('price_asc')">Price asc</a>
+            <a href="#" onclick="sortBy('price_desc')">Price desc</a>
+            <a href="#" onclick="sortBy('name_asc')">Name asc</a>
+            <a href="#" onclick="sortBy('name_desc')">Name desc</a>
+            <a href="#" onclick="sortBy('rating_asc')">Rating asc</a>
+            <a href="#" onclick="sortBy('rating_desc')">Rating desc</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropbtn">Per page</button>
+          <div class="dropdown-content">
+            <a href="#" onclick="setN(12)">12</a>
+            <a href="#" onclick="setN(24)">24</a>
+            <a href="#" onclick="setN(48)">48</a>
+          </div>
+        </div>
+      </div>
+
+      <input type="text" id="search-bar" name="query" placeholder="What are you looking for?">
+      <img class="search-icon" src="http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png">
+
+      <div class="num-results"> {{res}} results </div>
+
+      <div class="page-buttons">
+        <a href="#" onclick="prevPage()" class="previous">&laquo; Previous</a>
+        <a href="#" onclick="nextPage()" class="next">Next &raquo;</a>
+      </div>
+
+      <div class="categories">
+        <div class="categories-content">
+          <a class="category-option" href="#" onclick="setCategory('Electronics')">Electronics</a>
+          <a class="category-option" href="#" onclick="setCategory('Clothing')">Clothing</a>
+          <a class="category-option" href="#" onclick="setCategory('Home')">Home</a>
+          <a class="category-option" href="#" onclick="setCategory('Toys')">Toys</a>
+          <a class="category-option" href="#" onclick="setCategory('Sports')">Sports</a>
+          <a class="category-option" href="#" onclick="setCategory('Outdoors')">Outdoors</a>
+          <a class="category-option" href="#" onclick="setCategory('Beauty')">Beauty</a>
+          <a class="category-option" href="#" onclick="setCategory('Health')">Health</a>
+          <a class="category-option" href="#" onclick="setCategory('Automotive')">Automotive</a>
+          <a class="category-option" href="#" onclick="setCategory('Books')">Books</a>
+          <a class="category-option" href="#" onclick="setCategory('Movies')">Movies</a>
+          <a class="category-option" href="#" onclick="setCategory('Music')">Music</a>
+          <a class="category-option" href="#" onclick="setCategory('Grocery')">Grocery</a>
+          <a class="category-option" href="#" onclick="setCategory('Baby')">Baby</a>
+          <a class="category-option" href="#" onclick="setCategory('Office')">Office </a>
+          <a class="category-option" href="#" onclick="setCategory('Tools')">Tools</a>
+          <a class="category-option" href="#" onclick="setCategory('Patio')">Patio</a>
+          <a class="category-option" href="#" onclick="setCategory('Garden')">Garden</a>
+          <a class="category-option" href="#" onclick="setCategory('Appliances')">Appliances</a>
+          <a class="category-option" href="#" onclick="setCategory('Video Games')">Video Games</a>
+        </div>
+      </div>
+
+      <!-- <p>
+        <label for="fname">Sort by: Top k Most Expensive</label><br>
+        <input type="text" id="price_desc" name="price_desc"><br>
+      </p>
+      <p>
+        <input type="submit" value="Submit">
+      </p> -->
+
+    </form>
+  </p>
+
+</div>
+<!-- <table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in avail_products%}
+      <tr>
+        <th scope="row">{{product.id}}</th>
+        <td>{{product.name}}</td>
+        <td>{{product.price}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table> -->
+
+<main class="page-content">
+  {% for product in avail_products%}
+    <div class="card" style="--img: url({{product.image_url}})">
+      <div class="content">
+        <h2 class="title">{{product.name}}
+          {% if product.low_stock == True %}
+            <br>
+              <span class="badge badge-danger"> Only {{product.stock}} left! </span>
+            </br>
+          {% endif %}
+        </h2>
+        <p class="price">${{product.price}}</p>
+        <p class="copy">Rating: {{product.rating}}. 
+          <br>Shipping Speed: {{product.shipping_speed}}</br> {{product.description_short}}</p><button onclick="getProduct({{product.id}})" class="btn">View Product</button>
+      </div>
+    </div>
+  {% endfor %}
+</main>
+
+<br><br>
+{% if current_user.is_authenticated %}
+<h2>Your recent purchases:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Purchase ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for purchase in purchase_history%}
+      <tr>
+        <th scope="row">{{purchase.id}}</th>
+        <td>{{purchase.pid}}</td>
+        <td>{{purchase.time_purchased}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p><a href="{{ url_for('users.login') }}">Log in</a> to see your purchase history!</p>
+{% endif %}
+
+<script>
+  function nextPage() {
+    var page = window.location.search.split('page=')[1];
+    var query = window.location.search.split('query=')[1];
+
+    if (page == undefined) {
+      page = 1;
+    }
+
+    var newPage = parseInt(page) + 1;
+
+    var n = window.location.search.split('n=')[1];
+
+    if (n == undefined) {
+      if (query == undefined) {
+        window.location.href = "/?page=" + newPage;
+      } else {
+        window.location.href = "/?page=" + newPage + "&query=" + query;
+      }
+    } else {
+      if (query == undefined) {
+        window.location.href = "/?page=" + newPage + "&n=" + n;
+      } else {
+        window.location.href = "/?page=" + newPage + "&n=" + n + "&query=" + query;
+      }
+    }
+  }
+
+  function prevPage() {
+    var page = window.location.search.split('page=')[1];
+    var query = window.location.search.split('query=')[1];
+    var newPage = parseInt(page) - 1;
+
+    if (newPage <= 0 || page == undefined) {
+      // alert("You are already on the first page!");
+      newPage = 1;
+    }
+
+    var n = window.location.search.split('n=')[1];
+
+    if (n == undefined) {
+      if (query == undefined) {
+        window.location.href = "/?page=" + newPage;
+      } else {
+        window.location.href = "/?page=" + newPage + "&query=" + query;
+      }
+    } else {
+      if (query == undefined) {
+        window.location.href = "/?page=" + newPage + "&n=" + n;
+      } else {
+        window.location.href = "/?page=" + newPage + "&n=" + n + "&query=" + query;
+      }
+    }
+  }
+
+  function setN(newN) {
+    var page = window.location.search.split('page=')[1];
+    page = parseInt(page);
+    var filter = window.location.search.split('filter=')[1];
+    var query = window.location.search.split('query=')[1];
+    var category = window.location.search.split('category=')[1];
+
+    if (page == undefined) {
+      page = 1;
+    } else {
+      page = parseInt(page);
+    }
+    
+    if (query == undefined) {
+      if (filter == undefined) {
+        if (category == undefined) {
+          window.location.href = "/?page=" + 1 + "&n=" + newN;
+        } else {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&category=" + category;
+        }
+      } else {
+        if (category == undefined) {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&filter=" + filter;
+        } else {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&filter=" + filter + "&category=" + category;
+        }
+      }
+    }
+    else {
+      if (filter == undefined) {
+        if (category == undefined) {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&query=" + query;
+        } else {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&query=" + query + "&category=" + category;
+        }
+      } else {
+        if (category == undefined) {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&filter=" + filter + "&query=" + query;
+        } else {
+          window.location.href = "/?page=" + 1 + "&n=" + newN + "&filter=" + filter + "&query=" + query + "&category=" + category;
+        }
+      }
+    }
+
+  }
+
+  function sortBy(newFilter) {
+    var page = window.location.search.split('page=')[1];
+    var n = window.location.search.split('n=')[1];
+    var filter = window.location.search.split('filter=')[1];
+    var query = window.location.search.split('query=')[1];
+    var category = window.location.search.split('category=')[1];
+
+    if (page == undefined) {
+      page = 1;
+    } else {
+      page = parseInt(page);
+    }
+
+    if (n == undefined) {
+      n = 12;
+    } else {
+      n = parseInt(n);
+    }
+
+    if (query == undefined) {
+      if (category == undefined) {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + newFilter;
+      } else {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + newFilter + "&category=" + category;
+      }
+    } else {
+      if (category == undefined) {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + newFilter + "&query=" + query;
+      } else {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + newFilter + "&query=" + query + "&category=" + category;
+      }
+    }
+  }
+
+  function setCategory(newCategory) {
+    var page = window.location.search.split('page=')[1];
+    var n = window.location.search.split('n=')[1];
+    var filter = window.location.search.split('filter=')[1];
+    var query = window.location.search.split('query=')[1];
+
+    if (page == undefined) {
+      page = 1;
+    } else {
+      page = parseInt(page);
+    }
+
+    if (n == undefined) {
+      n = 12;
+    } else {
+      n = parseInt(n);
+    }
+
+    if (query == undefined) {
+      if (filter == undefined) {
+        window.location.href = "/?page=" + page + "&n=" + n + "&category=" + newCategory;
+      } else {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + filter + "&category=" + newCategory;
+      }
+    }
+    else {
+      if (filter == undefined) {
+        window.location.href = "/?page=" + page + "&n=" + n + "&category=" + newCategory + "&query=" + query;
+      } else {
+        window.location.href = "/?page=" + page + "&n=" + n + "&filter=" + filter + "&category=" + newCategory + "&query=" + query;
+      }
+    }
+  }
+
+  function getProduct(pid) {
+    window.location.href = "/product?id=" + pid;
+  }
+
+  function search() {
+    var search = document.getElementById("search-bar").value;
+    window.location.href = "/?search=" + search;
+  }
+</script>
+
+{% endblock %}

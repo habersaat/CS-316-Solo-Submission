@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<main>
+    <div class="prod-container">
+      <div class="grid second-nav">
+        <div class="column-xs-12">
+        </div>
+      </div>
+      {% for product in avail_products%}
+        <div class="grid product">
+          <div class="column-xs-12 column-md-7">
+            <div class="product-gallery">
+              <div class="product-image">
+                <img class="active" src="{{product.image_url}}">
+              </div>
+              <ul class="image-list">
+                <li class="image-item"><img src="{{product.image_url}}"></li>
+              </ul>
+            </div>
+          </div>
+          <div class="column-xs-12 column-md-5">
+            <h1>{{product.name}}</h1>
+            <h2>${{product.price}}</h2>
+
+            {% if tags %}
+              <div class="tags"> Tags:
+                {% for t in tags %}
+                  <span class="tag-widget">{{t.name}}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="description">
+              {% if product.rating == 0 %}
+                <h4>Rating: N/A</h4>
+              {% else %}
+                <h4>Rating: {{product.rating}}/5.0</h4>
+              {% endif %}
+              <p>{{product.description_short}}</p>
+              <p>{{product.description_long}}</p>
+            </div>
+            <h4>Shipping: {{product.shipping_speed}}</h4>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="grid related-products">
+        <!-- <div class="column-xs-12">
+          <h3>You may also like</h3>
+        </div>
+        <div class="column-xs-12 column-md-4">
+          <img src="https://source.unsplash.com/miziNqvJx5M">
+          <h4>Succulent</h4>
+          <p class="price">$19.99</p>
+        </div>
+        <div class="column-xs-12 column-md-4">
+          <img src="https://source.unsplash.com/2y6s0qKdGZg">
+          <h4>Terranium</h4>
+          <p class="price">$19.99</p>
+        </div>
+        <div class="column-xs-12 column-md-4">
+          <img src="https://source.unsplash.com/6Rs76hNbIWE">
+          <h4>Cactus</h4>
+          <p class="price">$19.99</p>
+        </div> -->
+      </div>
+    </div>
+</main>
+
+<h2 class="your-products">Sellers</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Seller ID</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Selected</th>
+      <th scope="col">Cart</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for prod in seller_products %}
+      <tr>
+        <th scope="row">{{ prod.sid }}</th>
+        <td>{{ prod.price }}</td>
+        <td>{{ prod.quantity }}</td>
+        <td>
+          <!-- Unique ID for each input based on product ID -->
+          <input type="number" id="numitems_{{ prod.sid }}" min="1" max="100" />
+        </td>
+        <td>
+          <!-- Pass the product ID and the input value to the function -->
+          <button class="btn" onclick="addToCart('{{ prod.id }}', '{{ prod.pid }}', '{{ prod.sid }},', '{{ prod.quantity }}', document.getElementById('numitems_{{ prod.sid }}').value);">
+            Add To Cart
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- <h2 class="your-products">Reviews</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Rating</th>
+      <th scope="col">Comment</th>
+      <th scope="col">Upvotes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in reviews%}
+      <tr>
+        <th scope="row">{{review.rating}}</th>
+        <td>{{review.comment}}</td>
+        <td>{{review.upvotes}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table> -->
+
+
+<!-- comments container -->
+<div class="comment_block">
+  <h2 class="your-products">Reviews</h2>
+    <!-- new comment -->
+    <div class="new_comment">
+      {% for review in reviews%}
+        <!-- build comment -->
+        <ul class="user_comment">
+
+          <!-- current #{user} avatar -->
+          <div class="user_rating">
+            {% if review.rating == 5 %}
+              <img src="https://cdn.discordapp.com/attachments/267067486518771713/1179795523717320755/5stars.jpg?ex=657b1534&is=6568a034&hm=ad5ed8a80dbb49bca40c38e4ae5b4f64b9e50760c28bdde7976a6cdbcfd9fca4&">
+            {% elif review.rating == 4%}
+            <img src="https://cdn.discordapp.com/attachments/267067486518771713/1179795523507597374/4stars.jpg?ex=657b1534&is=6568a034&hm=064c288416d6b566c4209d0c49b79b4a0b994172c8cd5309c46ee62fc9c4fe2b&">
+            {% elif review.rating == 3%}
+            <img src="https://cdn.discordapp.com/attachments/267067486518771713/1179795523289485465/3stars.jpg?ex=657b1534&is=6568a034&hm=fb650cd6b594e2ecab2b21e82ce6c3bd52529ce64fa84780d4797a719c83b710&">
+            {% elif review.rating == 2%}
+            <img src="https://cdn.discordapp.com/attachments/267067486518771713/1179795523029454848/2stars.jpg?ex=657b1534&is=6568a034&hm=9b67aab7b322a963b4aac4121e1d01cc8bf7a5baa7dd0e3d7fbb24c5bc312ad0&">
+            {% elif review.rating == 1%}
+            <img src="https://cdn.discordapp.com/attachments/267067486518771713/1179795522786177114/1star.jpg?ex=657b1534&is=6568a034&hm=b7b7973a743b220ab67cab1e4a9ad6351d83c52205e7341c28dac458b510134a&">
+            {% endif %}
+          </div><!-- the comment body --><div class="comment_body">
+            <p>{{review.comment}}</p>
+          </div>
+          
+          <!-- comments toolbar -->
+          <div class="comment_toolbar">
+
+            <!-- inc. date and time -->
+            <div class="comment_details">
+              <ul>
+                <li><i class="fa fa-clock-o"></i> {{review.time}}</li>
+                <li><i class="fa fa-calendar"></i> {{review.date}}</li>
+                <li><i class="fa fa-pencil"></i> <span class="user">{{review.user}}</span></li>
+              </ul>
+            </div><!-- inc. share/reply and love --><div class="comment_tools">
+              <ul>
+                <li><i class="fa fa-share-alt"></i></li>
+                <li><i class="fa fa-reply"></i></li>
+                <li><i class="fa fa-heart love"></i></li>
+              </ul>
+            </div>
+          </div>
+        </ul>
+      {% endfor %}
+      <button class="write-review" onclick="writeReview(product.id)">Write a Review</button> 
+    </div>
+  </div>
+
+<script>
+    function addToCart(tid, productId, sellerId, maxQuantity, quantity) {
+      quantity = parseInt(quantity);
+      maxQuantity = parseInt(maxQuantity);
+      if (quantity > maxQuantity) {
+        alert("You cannot add more than " + maxQuantity + " items to your cart.");
+        return;
+      } else {
+        alert("ID: " + tid + ", Product ID: " + productId + ", Seller ID: " + sellerId + " Quantity: " + quantity);
+      }
+      // TODO: Implement adding to cart
+    }
+
+    const activeImage = document.querySelector(".product-image .active");
+    const productImages = document.querySelectorAll(".image-list img");
+    const navItem = document.querySelector('a.toggle-nav');
+
+    function changeImage(e) {
+    activeImage.src = e.target.src;
+    }
+
+    function toggleNavigation(){
+    this.nextElementSibling.classList.toggle('active');
+    }
+
+    productImages.forEach(image => image.addEventListener("click", changeImage));
+    navItem.addEventListener('click', toggleNavigation);
+  </script>
+
+  <script>
+    function writeReview(productId) {
+    // Use prompt to get the rating
+    var rating = prompt("Please enter your rating (1-5):", "");
+    // Use prompt to get the review text
+    var review = prompt("Please enter your review:", "");
+
+    // Check if both rating and review are provided
+    if (rating && review) {
+        // Ask for confirmation before submitting
+        var isConfirmed = confirm("Are you sure you want to submit your review?");
+        
+        if (isConfirmed) {
+            // Prepare the data to be sent to the server
+            var reviewData = {
+                user_id: 1, //current_user.id, // Assuming you have access to current_user's ID
+                product_id: productId, // productId,
+                rating: rating,
+                comment: review
+            };
+
+            // Make an AJAX POST request to submit the review
+            fetch('/submit_review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reviewData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If the review was successfully submitted
+                    alert("Your review has been submitted.");
+                    // Redirect to the reviews page
+                    window.location.href = "http://localhost:8080/reviews";
+                } else {
+                    // If there was an error submitting the review
+                    alert("Error submitting review: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while submitting your review.");
+            });
+        } else {
+            // Handle the case where the user decides not to submit the review
+            alert("Your review was not submitted.");
+        }
+    } else {
+        // Handle the case where the user leaves the prompt empty or clicks cancel
+        alert("You must enter both a rating and a review to submit.");
+    }
+}
+
+</script>
+
+{% endblock %}
+

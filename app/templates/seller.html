@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if current_user.is_authenticated %}
+    <!-- Hello {{current_user.firstname}}!  -->
+    <p> </p>
+    <h1>Welcome to your seller page, {{current_user.firstname}}!</h1>
+
+    <h4> Want to list a new product? </h4>
+    <a href="/new" type="button" class="btn btn-light">New Product</a>
+
+    <h2 class="your-products">Your Products</h2>
+    <table class='table table-hover table-bordered container'>
+    <thead class="thead-dark">
+        <tr>
+        <th scope="col">Listing ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Image</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Manage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in seller_products%}
+        <tr>
+            <th scope="row">{{product.id}}</th>
+            <td>{{product.name}}</td>
+            <td><img src="{{product.image_url}}" width="100" height="100"></td>
+            <td>{{product.price}}</td>
+            <td>{{product.quantity}}</td>
+            <td><a href = "/edit/?id={{product.id}}" type = "button" class="btn btn-light">Edit</a>
+                <a href = "/delete/?id={{product.id}}" type = "button" class="btn btn-light" onclick="productDelete()">Delete </a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+{% else %}
+    <h1> You are not logged in! </h1>
+    <a href="/login" type="button" class="btn btn-light">Login</a>
+    <a href="/register" type="button" class="btn btn-light">Register</a>
+{% endif %}
+
+<script>
+    function productDelete() {
+        alert("Product has been deleted!");
+    }
+</script>
+
+{% endblock %}
